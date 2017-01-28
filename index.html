@@ -4,8 +4,38 @@
 function myFunction()
 {
 //new Clipboard('.btn');
-creatediv("");
+//creatediv("");
+
+var clipboard = new Clipboard('.btn');
+
+clipboard.on('success', function(e) {
+    console.info('Action:', e.action);
+    console.info('Text:', e.text);
+    console.info('Trigger:', e.trigger);
+
+    e.clearSelection();
+});
+
+setInterval(checksel, 100);
 }
+
+var selold="";
+function checksel()
+{
+var selnew=getSel("bar");
+console.log(selnew);
+if (selnew=="" && selold!="")
+{
+creatediv(selold);
+console.log(selold);
+}
+selold=selnew;
+
+}
+
+
+
+
 
 function gettext(textarea)
 {
@@ -14,8 +44,12 @@ var ret="";
 if (textarea==null) {}
 else
 {
-if (textarea.value!=undefined) ret=textarea.value;
-else ret=document.getElementById(textarea).value;
+if (textarea.value !=null && textarea.value!=undefined) ret=textarea.value;
+else {
+if  (document.getElementById(textarea)!=null)
+ret=document.getElementById(textarea).value;
+else ret=textarea;
+}
 }
 console.log(ret);
 return ret;
@@ -33,11 +67,13 @@ function getSel(textarea) // javascript
     // obtain the selected text
     var sel = txtarea.value.substring(start, finish);
     // do something with the selected content
+    return sel;
 }
 
 
 function creatediv(source)
 {
+console.log(source);
 var name="a";
 for (i=0;;i++)
 {
@@ -46,7 +82,7 @@ name="a"+i;
  if (txtarea==undefined) break;
 }
 
-var x = document.createElement("TEXTAREA");
+var x = document.createElement("p");
 x.rows=20;
 x.cols=40;
 x.id=name;
@@ -55,7 +91,7 @@ if (source!=undefined && source!="" && source!=null)
 {
 
 var sel=getSel(source);
-console.log(sel);
+console.log("90:"+sel);
 //alert(sel);
 if (sel!=undefined && sel!=null && sel.length!=0)
 {
@@ -71,15 +107,17 @@ x.value=gettext(source);
 
 
 }
+x.innerHTML=x.value;
 var d = document.createElement("div");
 d.appendChild(x);
 
 var b = document.createElement("button");
 b.onclick=function(evt) { evt.preventDefault();creatediv(name); };
 b.innerHTML="Copy selection or full";
-d.appendChild(b);
+//d.appendChild(b);
 
-document.body.appendChild(d);
+//document.body.appendChild(d);
+document.getElementById("right").appendChild(d);
 }
 
 
@@ -87,12 +125,22 @@ document.body.appendChild(d);
 <!-- Target -->
 
 <body onload="myFunction()">
+
+    <div style="width:50%;float:left;display:inline-block;">
 <textarea  rows=20 cols=40 id="bar">Mussum ipsum cacilds...</textarea>
 
 <!-- Trigger -->
 <button class="btn" data-clipboard-action="cut" data-clipboard-target="#bar">
     Cut to clipboard
 </button>
+
+        
+    </div>
+    <div style="margin-left:50%;" id="right">
+
+    </div>
+    
+    
 
 </body>
 
