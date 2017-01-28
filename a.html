@@ -1,0 +1,99 @@
+<script src="https://cdn.jsdelivr.net/clipboard.js/1.5.16/clipboard.min.js"></script>
+<script>
+
+function myFunction()
+{
+//new Clipboard('.btn');
+creatediv("");
+}
+
+function gettext(textarea)
+{
+console.log(textarea);
+var ret="";
+if (textarea==null) {}
+else
+{
+if (textarea.value!=undefined) ret=textarea.value;
+else ret=document.getElementById(textarea).value;
+}
+console.log(ret);
+return ret;
+}
+
+function getSel(textarea) // javascript
+{
+    // obtain the object reference for the <textarea>
+    var txtarea = document.getElementById(textarea);
+    // obtain the index of the first selected character
+    if (txtarea==null || txtarea.selectionStart==undefined) return null;
+    var start = txtarea.selectionStart;
+    // obtain the index of the last selected character
+    var finish = txtarea.selectionEnd;
+    // obtain the selected text
+    var sel = txtarea.value.substring(start, finish);
+    // do something with the selected content
+}
+
+
+function creatediv(source)
+{
+var name="a";
+for (i=0;;i++)
+{
+name="a"+i;
+ var txtarea = document.getElementById(name);
+ if (txtarea==undefined) break;
+}
+
+var x = document.createElement("TEXTAREA");
+x.rows=20;
+x.cols=40;
+x.id=name;
+
+if (source!=undefined && source!="" && source!=null)
+{
+
+var sel=getSel(source);
+console.log(sel);
+//alert(sel);
+if (sel!=undefined && sel!=null && sel.length!=0)
+{
+console.log("sellll");
+//alert("kell a sel");
+x.value=sel;
+}
+else
+{
+//alert( gettext(source));
+x.value=gettext(source);
+}
+
+
+}
+var d = document.createElement("div");
+d.appendChild(x);
+
+var b = document.createElement("button");
+b.onclick=function(evt) { evt.preventDefault();creatediv(name); };
+b.innerHTML="Copy selection or full";
+d.appendChild(b);
+
+document.body.appendChild(d);
+}
+
+
+</script>
+<!-- Target -->
+
+<body onload="myFunction()">
+<textarea  rows=20 cols=40 id="bar">Mussum ipsum cacilds...</textarea>
+
+<!-- Trigger -->
+<button class="btn" data-clipboard-action="cut" data-clipboard-target="#bar">
+    Cut to clipboard
+</button>
+
+</body>
+
+
