@@ -1,10 +1,50 @@
 <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.16/clipboard.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
 <script>
+
+
+
+
+var i=0;
+var barstate=[];
+function saveToDB()
+{
+    barstate[i]=document.getElementById("bar").value;
+    console.log(i);
+    console.log(document.getElementById("bar").value);
+    i++;
+    //console.log('Saving to the db');    
+}
+
+var j=-1;
+function load(w)
+{
+if (j==-1) j=i-1;
+var j2=j+w;
+if (barstate[j2]!==undefined) j=j2;
+j=Math.max(0,j);
+console.log(j);
+    document.getElementById("bar2").value=barstate[j];
+}
 
 function myFunction()
 {
 //new Clipboard('.btn');
 //creatediv("");
+
+
+var timeoutId;
+$('#bar').on('input propertychange change', function() {
+    //console.log('Textarea Change');
+
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function() {
+        // Runs 1 second (1000 ms) after the last change    
+        saveToDB();
+    }, 1000);
+});
+
 
 var clipboard = new Clipboard('.btn');
 
@@ -15,15 +55,49 @@ clipboard.on('success', function(e) {
 
     e.clearSelection();
 });
+saveToDB();
+load(0);
+
+
+$('#bar').keypress(function(event) {
+//console.log(event.keyCode);
+    if (event.keyCode == 60) {
+        load(-1);
+        event.preventDefault();
+    }
+    
+        if (event.keyCode == 62) {
+        load(1);
+        event.preventDefault();
+    }
+
+
+
+});
+
 
 setInterval(checksel, 100);
+}
+
+function onTestChange() {
+    var key = window.event.keyCode;
+//console.log(key);
+    // If the user has pressed enter
+    if (key == 60 || key==62) {
+    console.log("alma");
+        //document.getElementById("txtArea").value = document.getElementById("txtArea").value + "\n*";
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 var selold="";
 function checksel()
 {
 var selnew=getSel("bar");
-console.log(selnew);
+//console.log(selnew);
 if (selnew=="" && selold!="")
 {
 creatediv(selold);
@@ -127,12 +201,19 @@ document.getElementById("right").appendChild(d);
 <body onload="myFunction()">
 
     <div style="width:50%;float:left;display:inline-block;">
-<textarea  rows=20 cols=40 id="bar">Mussum ipsum cacilds...</textarea>
+    <button class="btn" onclick="load(-1);"><<< </button>
+<button class="btn" onclick="load(1);">>>> </button>
+</br>
+
+
+<textarea  rows=20 cols=40 id="bar"  onkeypress="onTestChange();">Mussum ipsum cacilds...</textarea>
 
 <!-- Trigger -->
 <button class="btn" data-clipboard-action="cut" data-clipboard-target="#bar">
     Cut to clipboard
 </button>
+
+<textarea  rows=20 cols=40 id="bar2"></textarea>
 
         
     </div>
